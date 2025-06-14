@@ -2,6 +2,7 @@ import undetected_chromedriver as uc
 import os
 import pickle
 import time
+import psutil  # Add this import for process management
 #wassup my nigga
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -480,6 +481,26 @@ def get_youtube_url_from_page(page):
         print(f"Error getting YouTube URL: {str(e)}")
         return None
 
+def kill_chrome_instances(profile_path):
+    """Kill any Chrome instances that were started from the specified profile directory."""
+    try:
+        # Get all running processes
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                # Check if it's a Chrome process
+                if proc.info['name'] and 'chrome' in proc.info['name'].lower():
+                    # Get the command line arguments
+                    cmdline = proc.info['cmdline']
+                    if cmdline:
+                        # Check if this Chrome instance is using our profile directory
+                        if any(profile_path in arg for arg in cmdline):
+                            log(f"Killing Chrome process with profile: {profile_path}", "info")
+                            proc.kill()
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                continue
+    except Exception as e:
+        log(f"Error killing Chrome instances: {str(e)}", "error")
+
 def setup_driver():
     # Chrome options setup
     options = uc.ChromeOptions()
@@ -488,9 +509,16 @@ def setup_driver():
     try:
         # Get the platform-specific Chrome profile path
         profile_path = get_chrome_profile_path()
+        
+        # Kill any existing Chrome instances using this profile
+        kill_chrome_instances(profile_path)
+        
+        # Add a small delay to ensure processes are fully terminated
+        time.sleep(2)
+        
         options.add_argument(f'--user-data-dir={profile_path}')
     except Exception as e:
-        print(f"Error setting up Chrome profile: {str(e)}")
+        log(f"Error setting up Chrome profile: {str(e)}", "error")
         raise
     
     # Initialize undetected-chromedriver
