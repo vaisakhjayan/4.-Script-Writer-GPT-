@@ -2,6 +2,7 @@ import undetected_chromedriver as uc
 import os
 import pickle
 import time
+#wassup man
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -16,8 +17,6 @@ import platform
 import pyperclip  # For cross-platform clipboard operations
 from bs4 import BeautifulSoup
 import openai
-#Vaisakh
-#Vaisakh Again
 import datetime
 import yt_dlp  # For downloading YouTube audio
 import tempfile  # For creating temporary files
