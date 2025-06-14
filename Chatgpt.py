@@ -2,7 +2,7 @@ import undetected_chromedriver as uc
 import os
 import pickle
 import time
-#wassup man
+#wassup my nigga
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
